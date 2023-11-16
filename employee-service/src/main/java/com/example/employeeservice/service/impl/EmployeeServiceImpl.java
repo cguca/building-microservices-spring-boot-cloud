@@ -3,6 +3,7 @@ package com.example.employeeservice.service.impl;
 import com.example.employeeservice.dto.APIResponseDto;
 import com.example.employeeservice.dto.DepartmentDto;
 import com.example.employeeservice.dto.EmployeeDto;
+import com.example.employeeservice.dto.OrganizationDto;
 import com.example.employeeservice.entity.Employee;
 import com.example.employeeservice.exception.ResourceNotFoundException;
 import com.example.employeeservice.repository.EmployeeRespository;
@@ -63,7 +64,14 @@ public class EmployeeServiceImpl implements EmployeeService
 
 //        DepartmentDto departmentDto = apiClient.getDepartment(employeeDto.getDepartmentCode());
 
-        APIResponseDto apiResponseDto = new APIResponseDto(employeeDto, departmentDto);
+        OrganizationDto organizationDto = webClient.get()
+                .uri("http://localhost:8083/api/organizations/" + employeeDto.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
+
+
+        APIResponseDto apiResponseDto = new APIResponseDto(employeeDto, departmentDto, organizationDto);
 
         return apiResponseDto;
     }
@@ -78,7 +86,8 @@ public class EmployeeServiceImpl implements EmployeeService
 
 
         DepartmentDto departmentDto = new DepartmentDto(0L, "R&D", "RD001", "Research and Development");
-        APIResponseDto apiResponseDto = new APIResponseDto(employeeDto, departmentDto);
+        OrganizationDto organizationDto = new OrganizationDto(null, "ORG", "Default Organization", "0000", null);
+        APIResponseDto apiResponseDto = new APIResponseDto(employeeDto, departmentDto, organizationDto);
 
         return apiResponseDto;
     }
